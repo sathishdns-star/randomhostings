@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Mobile-first viewport with safe-area support for iOS notches & Android gesture bars -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>The Boldness-to-Brains Ratio | Self-Assessment</title>
+
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          },
+          animation: {
+            'fade-in-up': 'fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          },
+          keyframes: {
+            fadeInUp: {
+              '0%': { opacity: '0', transform: 'translateY(12px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Ensure smooth mobile scrolling and prevent horizontal overflow or tap-highlight flicker */
+    html, body {
+      overscroll-behavior-y: none;
+      -webkit-tap-highlight-color: transparent;
+      overflow-x: hidden;
+    }
+
+    body {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+
+    /* Tactile mobile button interaction without sticky hover states */
+    .tap-card {
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: transform 0.14s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.18s ease, border-color 0.18s ease;
+    }
+    .tap-card:active {
+      transform: scale(0.975);
+    }
+
+    /* Hover rules scoped strictly to hover-capable pointers so mobile taps never get stuck */
+    @media (hover: hover) and (pointer: fine) {
+      .hover-elevate:hover {
+        border-color: #94a3b8;
+        background-color: #f8fafc;
+      }
+      .hover-dark-btn:hover {
+        background-color: #1e293b;
+      }
+      .hover-green-btn:hover {
+        background-color: #065f46;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen flex flex-col selection:bg-emerald-600 selection:text-white">
+
+  <!-- Sticky Top App Bar -->
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80">
+    <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black text-sm tracking-tight shrink-0 shadow-sm">
+          B:B
+        </div>
+        <div class="truncate">
+          <h1 class="text-sm sm:text-base font-extrabold tracking-tight text-slate-900 truncate">
+            The Boldness-to-Brains Ratio
+          </h1>
+          <p class="text-[11px] sm:text-xs text-slate-500 font-medium truncate">
+            Why brains alone don't make you rich
+          </p>
+        </div>
+      </div>
+
+      <button
+        id="headerRestartBtn"
+        type="button"
+        onclick="resetAssessment()"
+        class="hidden tap-card min-h-[40px] px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 border border-slate-200/80 shrink-0"
+      >
+        Restart
+      </button>
+    </div>
+
+    <!-- Quiz Progress Bar -->
+    <div id="progressBarTrack" class="hidden w-full bg-slate-100 h-1.5">
+      <div
+        id="progressBarFill"
+        class="bg-emerald-600 h-1.5 transition-all duration-300 ease-out rounded-r-full"
+        style="width: 10%"
+      ></div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 w-full max-w-2xl mx-auto px-4 py-5 sm:py-8 flex flex-col justify-center">
+
+    <!-- ==================== 1. WELCOME / INTRO SCREEN ==================== -->
+    <section id="welcomeScreen" class="animate-fade-in-up space-y-5">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold uppercase tracking-wide">
+          <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+          Interactive Quadrant Diagnostic
+        </div>
+
+        <div class="space-y-3">
+          <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 leading-tight">
+            Why brains alone don't make you rich.
+          </h2>
+          <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+            High intelligence without courage traps you in endless analysis. High courage without intelligence leads to reckless blowups. Discover your exact coordinates across the two core axes of wealth creation:
+          </p>
+        </div>
+
+        <!-- Two Axes Explanation Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="bg-slate-50 border border-slate-200/90 rounded-2xl p-4 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-indigo-700">X-Axis &bull; Horizontal</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-800">5 Questions</span>
+            </div>
+            <h3 class="text-base font-black text-slate-900">Brains (Competence)</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Analytical thinking, strategic planning, downside risk management, execution competence, and learning speed.
+            </p>
+          </div>
+
+          <div class="bg-slate-50 border border-slate-200/90 rounded-2xl p-4 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-700">Y-Axis &bull; Vertical</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">5 Questions</span>
+            </div>
+            <h3 class="text-base font-black text-slate-900">Boldness (Action)</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Bias for action, asymmetric risk appetite, resilience to rejection/failure, willingness to ship imperfectly, and decisive speed.
+            </p>
+          </div>
+        </div>
+
+        <!-- Wealth-Creation Potential Legend Strip -->
+        <div class="bg-slate-900 text-white rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+          <span class="text-xs font-extrabold tracking-wide uppercase text-slate-300">Wealth-creation potential:</span>
+          <div class="flex items-center gap-4 text-xs font-bold">
+            <span class="inline-flex items-center gap-1.5">
+              <span class="w-3.5 h-3.5 rounded bg-[#B92B27] inline-block"></span> Low
+            </span>
+            <span class="inline-flex items-center gap-1.5">
+              <span class="w-3.5 h-3.5 rounded bg-[#F4B43A] inline-block"></span> Moderate
+            </span>
+            <span class="inline-flex items-center gap-1.5">
+              <span class="w-3.5 h-3.5 rounded bg-[#0B6623] inline-block"></span> High
+            </span>
+          </div>
+        </div>
+
+        <!-- Primary Start CTA (>= 52px touch height) -->
+        <div class="pt-1">
+          <button
+            type="button"
+            onclick="startAssessment()"
+            class="tap-card hover-dark-btn w-full min-h-[54px] py-4 px-6 rounded-2xl bg-slate-900 text-white font-bold text-base sm:text-lg shadow-md shadow-slate-900/15 flex items-center justify-center gap-2.5"
+          >
+            <span>Start Assessment</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </button>
+          <p class="text-center text-xs text-slate-400 mt-3">
+            Takes ~90 seconds &bull; 10 questions &bull; Instant chart plotting
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 2. INTERACTIVE QUIZ SCREEN ==================== -->
+    <section id="quizScreen" class="hidden space-y-4">
+      <div id="questionCard" class="bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200/80 space-y-6 animate-fade-in-up">
+        <!-- Top Meta Row -->
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span id="questionCounter" class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+            Question 1 of 10
+          </span>
+          <span id="axisBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+            Brains &bull; Analytical Thinking
+          </span>
+        </div>
+
+        <!-- Question Prompt -->
+        <h2 id="questionPrompt" class="text-lg sm:text-2xl font-extrabold text-slate-900 leading-snug">
+          Loading question...
+        </h2>
+
+        <!-- 5-Point Likert Scale Buttons (>= 54px height each for thumb accuracy) -->
+        <div id="likertContainer" class="space-y-2.5 pt-1" role="radiogroup" aria-label="Likert Scale Options">
+          <!-- Dynamically rendered -->
+        </div>
+
+        <!-- Back / Next Controls (>= 48px touch targets) -->
+        <div class="flex items-center justify-between gap-3 pt-3 border-t border-slate-100">
+          <button
+            id="backBtn"
+            type="button"
+            onclick="goPrevious()"
+            class="tap-card min-h-[48px] px-4 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-slate-100 disabled:opacity-35 disabled:pointer-events-none flex items-center gap-1.5"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+            </svg>
+            <span>Back</span>
+          </button>
+
+          <button
+            id="nextBtn"
+            type="button"
+            onclick="goNext()"
+            disabled
+            class="tap-card min-h-[48px] px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-900 text-white disabled:bg-slate-200 disabled:text-slate-400 disabled:pointer-events-none flex items-center gap-1.5 shadow-sm"
+          >
+            <span id="nextBtnText">Next</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 3. DYNAMIC RESULTS SCREEN ==================== -->
+    <section id="resultsScreen" class="hidden space-y-5 animate-fade-in-up">
+
+      <!-- Top Score Summary & Ratio Card -->
+      <div class="bg-white rounded-3xl p-5 sm:p-7 shadow-sm border border-slate-200/80 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+            Your Quadrant Result
+          </span>
+          <span id="resultPotentialBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold">
+            Wealth-Creation Potential: High
+          </span>
+        </div>
+
+        <div>
+          <h2 id="resultZoneTitle" class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            Founder / empire builder
+          </h2>
+          <p id="resultZoneQuote" class="text-sm sm:text-base font-medium text-slate-600 mt-1 italic">
+            "Financially dangerous. (In a good way.)"
+          </p>
+        </div>
+
+        <!-- 3-Column Metrics: Boldness %, Brains %, and Boldness-to-Brains Ratio -->
+        <div class="grid grid-cols-3 gap-2.5 sm:gap-3">
+          <div class="bg-slate-50 border border-slate-200/90 rounded-2xl p-3 sm:p-4">
+            <span class="block text-[11px] font-bold uppercase tracking-wider text-emerald-700">Boldness (Y)</span>
+            <div class="flex items-baseline gap-0.5 mt-1">
+              <span id="boldnessPctText" class="text-xl sm:text-2xl font-black text-slate-900">85</span>
+              <span class="text-xs font-bold text-slate-500">%</span>
+            </div>
+            <div class="w-full bg-slate-200 h-1.5 rounded-full mt-2 overflow-hidden">
+              <div id="boldnessProgressBar" class="bg-emerald-600 h-1.5 rounded-full transition-all duration-700" style="width: 85%"></div>
+            </div>
+          </div>
+
+          <div class="bg-slate-50 border border-slate-200/90 rounded-2xl p-3 sm:p-4">
+            <span class="block text-[11px] font-bold uppercase tracking-wider text-indigo-700">Brains (X)</span>
+            <div class="flex items-baseline gap-0.5 mt-1">
+              <span id="brainsPctText" class="text-xl sm:text-2xl font-black text-slate-900">80</span>
+              <span class="text-xs font-bold text-slate-500">%</span>
+            </div>
+            <div class="w-full bg-slate-200 h-1.5 rounded-full mt-2 overflow-hidden">
+              <div id="brainsProgressBar" class="bg-indigo-600 h-1.5 rounded-full transition-all duration-700" style="width: 80%"></div>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 text-white rounded-2xl p-3 sm:p-4 flex flex-col justify-between">
+            <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400">B:B Ratio</span>
+            <div class="mt-1">
+              <span id="ratioValueText" class="text-xl sm:text-2xl font-black text-amber-400">1.06x</span>
+            </div>
+            <span id="ratioBalanceHint" class="text-[10px] font-semibold text-slate-300 truncate mt-1">
+              Balanced Action
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive SVG Recreation of "The boldness-to-brains ratio" Chart -->
+      <div class="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200/80 space-y-3">
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <h3 class="text-base sm:text-lg font-black text-slate-900">The boldness-to-brains ratio</h3>
+            <p class="text-xs text-slate-500">Your exact (Brains, Boldness) coordinates on the curve</p>
+          </div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-extrabold text-slate-800 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-lg shrink-0">
+            <span class="w-2.5 h-2.5 rounded-full bg-blue-600 ring-2 ring-white"></span>
+            You
+          </span>
+        </div>
+
+        <!-- Crisp Scalable SVG Container -->
+        <div class="w-full overflow-hidden rounded-2xl border-2 border-slate-900 bg-white shadow-inner">
+          <svg
+            id="boldnessBrainsSvg"
+            viewBox="0 0 800 545"
+            class="w-full h-auto block select-none"
+            role="img"
+            aria-label="The boldness-to-brains ratio scatter plot showing your coordinates"
+          >
+            <defs>
+              <filter id="textDropShadow" x="-10%" y="-10%" width="120%" height="120%">
+                <feDropShadow dx="0" dy="1" stdDeviation="1.4" flood-color="#000000" flood-opacity="0.35" />
+              </filter>
+              <filter id="markerShadow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000000" flood-opacity="0.6" />
+              </filter>
+            </defs>
+
+            <!-- Plot Box Base: Dark Crimson Red (Top-Left: Criminal energy) -->
+            <rect x="68" y="18" width="710" height="456" fill="#9B201E" />
+
+            <!-- Band 2: Rich Red -->
+            <path d="M 68 255 C 215 210, 260 115, 292 18 L 778 18 L 778 474 L 68 474 Z" fill="#C43832" />
+
+            <!-- Band 3: Coral Red (Reckless chaos) -->
+            <path d="M 68 315 C 245 255, 340 165, 396 18 L 778 18 L 778 474 L 68 474 Z" fill="#E36249" />
+
+            <!-- Band 4: Warm Amber-Orange -->
+            <path d="M 68 365 C 275 295, 405 215, 466 18 L 778 18 L 778 474 L 68 474 Z" fill="#F2944B" />
+
+            <!-- Band 5: Golden Yellow (The wealth-building sweet spot) -->
+            <path d="M 68 415 C 310 340, 455 255, 516 18 L 778 18 L 778 474 L 68 474 Z" fill="#F6CA58" />
+
+            <!-- Band 6: Lime-Olive Transition -->
+            <path d="M 68 455 C 340 375, 495 280, 552 18 L 778 18 L 778 474 L 68 474 Z" fill="#89BA41" />
+
+            <!-- Band 7: Rich Deep Green (Founder / empire builder) -->
+            <path d="M 68 474 C 365 390, 525 290, 578 18 L 778 18 L 778 474 L 68 474 Z" fill="#0B6623" />
+
+            <!-- Below Diagonal Line Bands (Under-boldness / Overthinking) -->
+            <!-- Band 8: Yellow wedge right under diagonal -->
+            <path d="M 68 474 L 778 18 L 778 474 Z" fill="#F7C957" />
+
+            <!-- Band 9: Orange transition below diagonal -->
+            <path d="M 155 474 C 390 365, 595 225, 778 65 L 778 474 Z" fill="#F2944B" />
+
+            <!-- Band 10: Soft Coral (Helpless, meek, and lost) -->
+            <path d="M 275 474 C 480 390, 650 285, 778 155 L 778 474 Z" fill="#EB7B6A" />
+
+            <!-- Band 11: Crimson Coral (Bitter professor / permanent student) -->
+            <path d="M 415 474 C 570 415, 695 345, 778 255 L 778 474 Z" fill="#DF5648" />
+
+            <!-- Band 12: Deep Red Bottom-Right Corner -->
+            <path d="M 565 474 C 665 435, 735 395, 778 350 L 778 474 Z" fill="#C93B33" />
+
+            <!-- Dashed Diagonal Line: Equal boldness and brains -->
+            <line
+              x1="68"
+              y1="474"
+              x2="778"
+              y2="18"
+              stroke="#1e293b"
+              stroke-width="2.5"
+              stroke-dasharray="9,7"
+            />
+
+            <!-- Diagonal Text Callouts -->
+            <text
+              x="295"
+              y="314"
+              fill="#1e293b"
+              font-size="14"
+              font-weight="700"
+              transform="rotate(-32.7, 295, 314)"
+            >
+              Equal boldness and brains
+            </text>
+
+            <text
+              x="595"
+              y="162"
+              fill="#1e293b"
+              font-size="13"
+              font-weight="700"
+              transform="rotate(-32.7, 595, 162)"
+            >
+              Doesn't overthink.
+            </text>
+            <text
+              x="603"
+              y="178"
+              fill="#1e293b"
+              font-size="13"
+              font-weight="700"
+              transform="rotate(-32.7, 603, 178)"
+            >
+              Actually takes the shot.
+            </text>
+
+            <!-- Zone 1: Criminal energy -->
+            <g transform="translate(90, 66)">
+              <text x="0" y="0" fill="#ffffff" font-size="25" font-weight="900" filter="url(#textDropShadow)">Criminal</text>
+              <text x="0" y="25" fill="#ffffff" font-size="25" font-weight="900" filter="url(#textDropShadow)">energy</text>
+              <text x="0" y="45" fill="#fee2e2" font-size="11.5" font-weight="500">All boldness. No brains.</text>
+              <text x="0" y="59" fill="#fee2e2" font-size="11.5" font-weight="500">Usually ends in handcuffs</text>
+              <text x="0" y="73" fill="#fee2e2" font-size="11.5" font-weight="500">or child support.</text>
+            </g>
+
+            <!-- Zone 2: Reckless chaos + Forbes 30u30 pointer -->
+            <g transform="translate(330, 54)">
+              <text x="0" y="0" fill="#0f172a" font-size="21" font-weight="900">Reckless</text>
+              <text x="0" y="22" fill="#0f172a" font-size="21" font-weight="900">chaos</text>
+              <text x="0" y="40" fill="#1e293b" font-size="11.5" font-weight="600">Big swings. Occasional</text>
+              <text x="0" y="54" fill="#1e293b" font-size="11.5" font-weight="600">jackpots. More often,</text>
+              <text x="0" y="68" fill="#1e293b" font-size="11.5" font-weight="600">blowups.</text>
+              <text x="-8" y="96" fill="#0f172a" font-size="13" font-weight="800" font-style="italic">Forbes 30u30</text>
+              <line x1="-14" y1="91" x2="-36" y2="83" stroke="#0f172a" stroke-width="1.8" />
+              <circle cx="-36" cy="83" r="3.5" fill="#0f172a" />
+            </g>
+
+            <!-- Zone 3: The wealth-building sweet spot -->
+            <g transform="translate(262, 196)">
+              <text x="0" y="0" fill="#0f172a" font-size="20" font-weight="900">The wealth-building</text>
+              <text x="0" y="21" fill="#0f172a" font-size="20" font-weight="900">sweet spot</text>
+              <text x="0" y="38" fill="#1e293b" font-size="11.5" font-weight="600">Enough courage to act.</text>
+              <text x="0" y="52" fill="#1e293b" font-size="11.5" font-weight="600">Enough brains to avoid stupidity.</text>
+              <line x1="138" y1="8" x2="225" y2="26" stroke="#0f172a" stroke-width="1.8" />
+              <circle cx="225" cy="26" r="3.8" fill="#0f172a" />
+            </g>
+
+            <!-- Zone 4: Founder / empire builder -->
+            <g transform="translate(566, 54)">
+              <text x="0" y="0" fill="#ffffff" font-size="21" font-weight="900" filter="url(#textDropShadow)">Founder /</text>
+              <text x="0" y="22" fill="#ffffff" font-size="21" font-weight="900" filter="url(#textDropShadow)">empire builder</text>
+              <text x="0" y="40" fill="#dcfce7" font-size="11.5" font-weight="600">Financially dangerous.</text>
+              <text x="0" y="54" fill="#dcfce7" font-size="11.5" font-weight="600">(In a good way.)</text>
+            </g>
+
+            <!-- Zone 5: Helpless, meek, and lost -->
+            <g transform="translate(224, 412)">
+              <text x="0" y="0" fill="#0f172a" font-size="19" font-weight="900">Helpless, meek, and lost</text>
+              <text x="0" y="17" fill="#1e293b" font-size="11.5" font-weight="600">No boldness. No brains.</text>
+              <text x="0" y="31" fill="#1e293b" font-size="11.5" font-weight="600">Complains about everything.</text>
+              <text x="0" y="45" fill="#1e293b" font-size="11.5" font-weight="600">Zero financial success.</text>
+            </g>
+
+            <!-- Zone 6: Bitter professor / permanent student -->
+            <g transform="translate(515, 365)">
+              <text x="0" y="0" fill="#0f172a" font-size="20" font-weight="900">Bitter professor /</text>
+              <text x="0" y="22" fill="#0f172a" font-size="20" font-weight="900">permanent student</text>
+              <text x="0" y="40" fill="#1e293b" font-size="11.5" font-weight="600">Understands everything. Does nothing.</text>
+              <text x="0" y="54" fill="#1e293b" font-size="11.5" font-weight="600">Writes 17 blog posts about</text>
+              <text x="0" y="68" fill="#1e293b" font-size="11.5" font-weight="600">why it won't work.</text>
+            </g>
+
+            <!-- Outer White Axis Masks & Crisp Plot Border -->
+            <rect x="0" y="0" width="68" height="545" fill="#ffffff" />
+            <rect x="0" y="0" width="800" height="18" fill="#ffffff" />
+            <rect x="778" y="0" width="22" height="545" fill="#ffffff" />
+            <rect x="0" y="474" width="800" height="71" fill="#ffffff" />
+            <rect x="68" y="18" width="710" height="456" fill="none" stroke="#0f172a" stroke-width="2.5" />
+
+            <!-- Y-Axis Labels (Boldness) -->
+            <text x="58" y="32" text-anchor="end" fill="#0f172a" font-size="15" font-weight="800">High</text>
+            <text x="58" y="473" text-anchor="end" fill="#0f172a" font-size="15" font-weight="800">Low</text>
+            <text
+              x="24"
+              y="246"
+              text-anchor="middle"
+              fill="#0f172a"
+              font-size="20"
+              font-weight="900"
+              transform="rotate(-90, 24, 246)"
+            >
+              Boldness
+            </text>
+
+            <!-- X-Axis Labels (Brains) -->
+            <text x="68" y="497" text-anchor="start" fill="#0f172a" font-size="15" font-weight="800">Low</text>
+            <text x="778" y="497" text-anchor="end" fill="#0f172a" font-size="15" font-weight="800">High</text>
+            <text x="423" y="514" text-anchor="middle" fill="#0f172a" font-size="20" font-weight="900">Brains</text>
+
+            <!-- ANIMATED PULSING USER PIN MARKER -->
+            <g id="userCoordinatePin" transform="translate(423, 246)" filter="url(#markerShadow)">
+              <!-- Animated Pulsing Radar Ring -->
+              <circle cx="0" cy="0" r="14" fill="#2563eb" opacity="0.5">
+                <animate attributeName="r" values="10;28;10" dur="2.1s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.7;0;0.7" dur="2.1s" repeatCount="indefinite" />
+              </circle>
+              <!-- White Border Circle -->
+              <circle cx="0" cy="0" r="11" fill="#ffffff" />
+              <!-- Core Blue Dot -->
+              <circle cx="0" cy="0" r="7.5" fill="#2563eb" />
+              <!-- Dynamic Coordinate Pill Label -->
+              <g id="pinLabelPill" transform="translate(0, -25)">
+                <rect x="-42" y="-13" width="84" height="20" rx="10" fill="#0f172a" stroke="#ffffff" stroke-width="1.5" />
+                <text id="pinCoordText" x="0" y="1" text-anchor="middle" fill="#ffffff" font-size="10.5" font-weight="800">YOU (80, 85)</text>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        <!-- Bottom Legend -->
+        <div class="flex flex-wrap items-center justify-center gap-4 pt-1 text-xs font-bold text-slate-700">
+          <span class="text-slate-900 font-extrabold">Wealth-creation potential:</span>
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-4 h-3 rounded-sm bg-[#B92B27] inline-block"></span> Low
+          </span>
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-4 h-3 rounded-sm bg-[#F4B43A] inline-block"></span> Moderate
+          </span>
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-4 h-3 rounded-sm bg-[#0B6623] inline-block"></span> High
+          </span>
+        </div>
+      </div>
+
+      <!-- Detailed Archetype Card: Description, Strengths, Blind Spots & 3 Next Steps -->
+      <div class="bg-white rounded-3xl p-5 sm:p-7 shadow-sm border border-slate-200/80 space-y-5">
+        <div class="space-y-2">
+          <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-700">
+            Archetype Breakdown
+          </span>
+          <h3 class="text-xl font-black text-slate-900">Profile Analysis &amp; Growth Roadmap</h3>
+          <p id="archetypeDescription" class="text-sm sm:text-base text-slate-600 leading-relaxed">
+            Detailed archetype analysis loads here...
+          </p>
+        </div>
+
+        <!-- Strengths & Blind Spots Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="bg-emerald-50/70 border border-emerald-200/80 rounded-2xl p-4 space-y-1.5">
+            <div class="flex items-center gap-1.5 text-emerald-900 font-extrabold text-xs uppercase tracking-wider">
+              <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Core Strengths</span>
+            </div>
+            <p id="archetypeStrengths" class="text-xs sm:text-sm text-emerald-950 font-medium leading-relaxed">
+              Strengths summary...
+            </p>
+          </div>
+
+          <div class="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-4 space-y-1.5">
+            <div class="flex items-center gap-1.5 text-amber-900 font-extrabold text-xs uppercase tracking-wider">
+              <svg class="w-4 h-4 text-amber-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+              </svg>
+              <span>Primary Blind Spots</span>
+            </div>
+            <p id="archetypeBlindSpots" class="text-xs sm:text-sm text-amber-950 font-medium leading-relaxed">
+              Blind spots summary...
+            </p>
+          </div>
+        </div>
+
+        <!-- 3 Concrete Actionable Next Steps -->
+        <div class="bg-slate-50 border border-slate-200/90 rounded-2xl p-4 sm:p-5 space-y-3">
+          <p class="text-xs font-extrabold uppercase tracking-wider text-slate-600">
+            3 Concrete Steps Toward Empire Builder
+          </p>
+          <ol id="nextStepsList" class="space-y-2.5 text-sm text-slate-800 font-medium">
+            <!-- Dynamically populated -->
+          </ol>
+        </div>
+      </div>
+
+      <!-- Bottom Share & Retake Action Buttons (>= 52px mobile tap targets) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-6">
+        <button
+          type="button"
+          onclick="shareResult()"
+          class="tap-card hover-green-btn w-full min-h-[54px] py-3.5 px-5 rounded-2xl bg-emerald-700 text-white font-bold text-sm sm:text-base shadow-md shadow-emerald-900/15 flex items-center justify-center gap-2"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+          </svg>
+          <span>Share Result</span>
+        </button>
+
+        <button
+          type="button"
+          onclick="resetAssessment()"
+          class="tap-card hover-elevate w-full min-h-[54px] py-3.5 px-5 rounded-2xl bg-white text-slate-800 border-2 border-slate-200 font-bold text-sm sm:text-base flex items-center justify-center gap-2"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+          </svg>
+          <span>Retake Assessment</span>
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast Feedback Banner (Replaces alert() for clean iOS/Android UX) -->
+  <div
+    id="toastBanner"
+    class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-300 translate-y-3 bg-slate-900 text-white text-xs sm:text-sm font-semibold px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2 max-w-[90vw]"
+    role="status"
+    aria-live="polite"
+  >
+    <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+    </svg>
+    <span id="toastText">Result copied to clipboard!</span>
+  </div>
+
+  <!-- Hidden Textarea for Reliable iOS Safari & Android WebView Clipboard Copy -->
+  <textarea id="clipboardHelper" class="sr-only" aria-hidden="true" tabindex="-1"></textarea>
+
+  <script>
+    // =========================================================================
+    // 1. 10-QUESTION ASSESSMENT MODEL (5 Brains + 5 Boldness)
+    // =========================================================================
+    const QUESTIONS = [
+      {
+        id: 1,
+        axis: 'brains',
+        dimension: 'Analytical Thinking',
+        prompt: 'Before putting money or serious time into an idea, I calculate the unit economics, profit margins, and downside math.'
+      },
+      {
+        id: 2,
+        axis: 'boldness',
+        dimension: 'Bias for Action',
+        prompt: 'When I spot a promising opportunity, I take immediate real-world action instead of waiting until every detail feels safe.'
+      },
+      {
+        id: 3,
+        axis: 'brains',
+        dimension: 'Strategic Planning',
+        prompt: 'I routinely map out second-order consequences and market bottlenecks two or three moves ahead of my competitors.'
+      },
+      {
+        id: 4,
+        axis: 'boldness',
+        dimension: 'Risk Appetite',
+        prompt: 'I am willing to bet my own capital, reputation, or comfort on asymmetric opportunities where upside dwarfs downside.'
+      },
+      {
+        id: 5,
+        axis: 'brains',
+        dimension: 'Risk Management',
+        prompt: 'I structure my bets so that even if a bold swing fails completely, it cannot wipe me out financially or legally.'
+      },
+      {
+        id: 6,
+        axis: 'boldness',
+        dimension: 'Resilience to Rejection/Failure',
+        prompt: 'Public rejection, early flops, or awkward setbacks motivate me to iterate faster rather than causing me to retreat.'
+      },
+      {
+        id: 7,
+        axis: 'brains',
+        dimension: 'Execution Competence',
+        prompt: 'I consistently translate complex ideas into repeatable systems and deliver high-quality output on deadline.'
+      },
+      {
+        id: 8,
+        axis: 'boldness',
+        dimension: 'Willingness to Pitch/Ship Imperfectly',
+        prompt: 'I happily ship an imperfect MVP or pitch a high-ticket offer directly to decision makers before feeling 100% ready.'
+      },
+      {
+        id: 9,
+        axis: 'brains',
+        dimension: 'Learning Speed',
+        prompt: 'When market data proves my hypothesis wrong, I update my mental model rapidly without letting ego get in the way.'
+      },
+      {
+        id: 10,
+        axis: 'boldness',
+        dimension: 'Decisive Speed',
+        prompt: 'Once I have roughly 70% of the facts, I pull the trigger decisively while others are still debating.'
+      }
+    ];
+
+    const LIKERT_SCALE = [
+      { value: 1, label: 'Strongly Disagree' },
+      { value: 2, label: 'Disagree' },
+      { value: 3, label: 'Neutral' },
+      { value: 4, label: 'Agree' },
+      { value: 5, label: 'Strongly Agree' }
+    ];
+
+    // =========================================================================
+    // 2. ARCHETYPE DEFINITIONS (Aligned with Chart Zones & Colors)
+    // =========================================================================
+    const ARCHETYPES = {
+      CRIMINAL_ENERGY: {
+        title: 'Criminal energy',
+        quote: '"All boldness. No brains. Usually ends in handcuffs or child support."',
+        potential: 'Low',
+        badgeClasses: 'bg-red-100 text-red-900 border border-red-300',
+        description:
+          'You possess extreme fearlessness and zero hesitation—raw kinetic energy that most people lack—but without analytical guardrails or risk filters, your aggression repeatedly leads to avoidable traps, bad deals, or self-inflicted blowups.',
+        strengths:
+          'Unstoppable courage, zero fear of rejection, and willingness to make bold moves while others freeze.',
+        blindSpots:
+          'Impulsive decision-making, ignoring downside math, legal/reputational blind spots, and lack of repeatable systems.',
+        nextSteps: [
+          'Enforce a mandatory 48-hour "cool-off rule" before signing contracts, wiring funds, or entering new partnerships.',
+          'Team up with a detail-oriented operator or advisor who stress-tests downside risks before you pull the trigger.',
+          'Master basic unit economics, cash-flow math, and compliance so your boldness compounds instead of resetting to zero.'
+        ]
+      },
+      RECKLESS_CHAOS: {
+        title: 'Reckless chaos',
+        quote: '"Big swings. Occasional jackpots. More often, blowups."',
+        potential: 'Moderate',
+        badgeClasses: 'bg-orange-100 text-orange-900 border border-orange-300',
+        description:
+          'You take massive swings and occasionally hit flashy jackpots (the classic Forbes 30u30 rollercoaster), yet your execution discipline and risk controls lag behind your ambition—making sustained wealth hard to keep.',
+        strengths:
+          'High energy, persuasive salesmanship, big-picture vision, and ability to create momentum out of thin air.',
+        blindSpots:
+          'Over-leveraging on unvalidated bets, neglecting retention/operations, and confusing short-term hype with durable profit.',
+        nextSteps: [
+          'Cap your downside on every bet: never risk more than 10–15% of your bankroll on an unproven thesis.',
+          'Build standard operating procedures (SOPs) around your wins so revenue relies on systems rather than constant heroics.',
+          'Validate unit economics and customer retention before pouring fuel on growth.'
+        ]
+      },
+      SWEET_SPOT: {
+        title: 'Forbes 30u30 / The wealth-building sweet spot',
+        quote: '"Enough courage to act. Enough brains to avoid stupidity."',
+        potential: 'Moderate',
+        badgeClasses: 'bg-amber-100 text-amber-900 border border-amber-300',
+        description:
+          'You sit right above the equal boldness-and-brains line—an enviable balance where you analyze clearly AND actually take the shot. You filter out obvious stupidity while capturing real upside.',
+        strengths:
+          'Balanced judgment, healthy bias for action, strong learning agility, and practical risk awareness.',
+        blindSpots:
+          'Occasionally playing slightly too small or hesitating to scale once an opportunity is clearly working.',
+        nextSteps: [
+          'Increase bet sizing on asymmetric opportunities where your analytical edge is already proven.',
+          'Delegate routine operational tasks so your brains focus exclusively on high-leverage strategic moves.',
+          'Push Boldness 10–15% higher by pitching bigger partners, raising prices, and shipping faster.'
+        ]
+      },
+      EMPIRE_BUILDER: {
+        title: 'Founder / empire builder',
+        quote: '"Financially dangerous. (In a good way.) Doesn\'t overthink. Actually takes the shot."',
+        potential: 'High',
+        badgeClasses: 'bg-emerald-100 text-emerald-900 border border-emerald-300',
+        description:
+          'You occupy the apex green zone: elite strategic intelligence fused with relentless execution speed. You spot asymmetric edges, verify the math fast, and pull the trigger while competitors are still writing memos.',
+        strengths:
+          'High-speed synthesis, calculated asymmetric risk-taking, operational rigor, and resilient execution.',
+        blindSpots:
+          'Potential blind spot to watch: over-extending across too many simultaneous ventures or outgrowing your early leadership team.',
+        nextSteps: [
+          'Focus relentlessly on capital allocation and compounding leverage (code, media, capital, and A-player talent).',
+          'Codify your decision-making frameworks so key lieutenants can execute at your speed without bottlenecking on you.',
+          'Surround yourself with peers playing at an even larger scale to keep your boldness calibrated upward.'
+        ]
+      },
+      HELPLESS_MEEK: {
+        title: 'Helpless, meek, and lost',
+        quote: '"No boldness. No brains. Complains about everything. Zero financial success."',
+        potential: 'Low',
+        badgeClasses: 'bg-rose-100 text-rose-900 border border-rose-300',
+        description:
+          'Right now, both your strategic toolkit and your habit of taking uncomfortable action are underdeveloped. Waiting for luck or external rescue guarantees stagnation—the good news is that small daily reps shift both axes rapidly.',
+        strengths:
+          'A completely clean slate with massive upside potential from even modest daily improvements in skill and courage.',
+        blindSpots:
+          'Passive waiting, blaming external circumstances, avoiding discomfort, and lacking high-value market skills.',
+        nextSteps: [
+          'Choose one practical, high-demand skill (sales, coding, copywriting, or operations) and study/practice it 60 minutes daily.',
+          'Complete one "micro-boldness" rep every day: send a cold outreach message, negotiate a price, or ship a small project.',
+          'Eliminate complaining for 30 days and convert every frustration into a concrete, testable experiment.'
+        ]
+      },
+      BITTER_PROFESSOR: {
+        title: 'Bitter professor / permanent student',
+        quote: '"Understands everything. Does nothing. Writes 17 blog posts about why it won\'t work."',
+        potential: 'Low',
+        badgeClasses: 'bg-red-100 text-red-900 border border-red-200',
+        description:
+          'You possess sharp intellect and deep domain knowledge, yet you use your brains as a shield to rationalize inaction. Watching less-qualified people get rich while you critique their flaws is the classic high-IQ trap.',
+        strengths:
+          'Deep analytical rigor, pattern recognition, strategic foresight, and strong risk awareness.',
+        blindSpots:
+          'Analysis paralysis, perfectionism, fear of public failure, and mistaking passive consumption for real progress.',
+        nextSteps: [
+          'Go on a strict 30-day "consumption fast": zero new courses, books, or podcasts until you launch a real offer.',
+          'Ship an imperfect minimum viable product or service within 7 days and pitch 10 real prospects directly.',
+          'Enforce the 70% Rule: the moment you have 70% of the data, execute immediately and let market feedback teach you.'
+        ]
+      }
+    };
+
+    // =========================================================================
+    // 3. APPLICATION STATE
+    // =========================================================================
+    let currentIdx = 0;
+    let answers = {};
+    let shareSummaryText = '';
+
+    // =========================================================================
+    // 4. SCREEN FLOW & INTERACTIVE QUIZ LOGIC
+    // =========================================================================
+    function startAssessment() {
+      currentIdx = 0;
+      answers = {};
+      document.getElementById('welcomeScreen').classList.add('hidden');
+      document.getElementById('resultsScreen').classList.add('hidden');
+      document.getElementById('quizScreen').classList.remove('hidden');
+      document.getElementById('progressBarTrack').classList.remove('hidden');
+      document.getElementById('headerRestartBtn').classList.remove('hidden');
+      renderCurrentQuestion();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetAssessment() {
+      currentIdx = 0;
+      answers = {};
+      document.getElementById('quizScreen').classList.add('hidden');
+      document.getElementById('resultsScreen').classList.add('hidden');
+      document.getElementById('progressBarTrack').classList.add('hidden');
+      document.getElementById('headerRestartBtn').classList.add('hidden');
+      document.getElementById('welcomeScreen').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderCurrentQuestion() {
+      const q = QUESTIONS[currentIdx];
+      const total = QUESTIONS.length;
+      const chosen = answers[q.id] || null;
+
+      // Update Progress Bar
+      const pct = ((currentIdx + 1) / total) * 100;
+      document.getElementById('progressBarFill').style.width = `${pct}%`;
+
+      // Update Header Counter & Axis Pill
+      document.getElementById('questionCounter').textContent = `Question ${currentIdx + 1} of ${total}`;
+
+      const axisBadge = document.getElementById('axisBadge');
+      if (q.axis === 'brains') {
+        axisBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200';
+        axisBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-indigo-600"></span> Brains &bull; ${q.dimension}`;
+      } else {
+        axisBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
+        axisBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Boldness &bull; ${q.dimension}`;
+      }
+
+      // Trigger subtle card entrance animation
+      const card = document.getElementById('questionCard');
+      card.classList.remove('animate-fade-in-up');
+      void card.offsetWidth;
+      card.classList.add('animate-fade-in-up');
+
+      document.getElementById('questionPrompt').textContent = q.prompt;
+
+      // Render 5 Likert Scale Option Buttons (>= 54px touch height)
+      const container = document.getElementById('likertContainer');
+      container.innerHTML = '';
+
+      LIKERT_SCALE.forEach((opt) => {
+        const isSelected = chosen === opt.value;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.setAttribute('role', 'radio');
+        btn.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+
+        btn.className = isSelected
+          ? 'tap-card w-full min-h-[54px] px-4 py-3.5 rounded-2xl border-2 border-slate-900 bg-slate-900 text-white font-bold text-sm sm:text-base flex items-center justify-between shadow-sm'
+          : 'tap-card hover-elevate w-full min-h-[54px] px-4 py-3.5 rounded-2xl border-2 border-slate-200 bg-white text-slate-800 font-semibold text-sm sm:text-base flex items-center justify-between';
+
+        btn.innerHTML = `
+          <span class="flex items-center gap-3">
+            <span class="w-7 h-7 rounded-xl text-xs font-extrabold flex items-center justify-center shrink-0 ${
+              isSelected ? 'bg-white text-slate-900' : 'bg-slate-100 text-slate-600'
+            }">
+              ${opt.value}
+            </span>
+            <span>${opt.label}</span>
+          </span>
+          <span class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+            isSelected ? 'border-emerald-400 bg-emerald-400 text-slate-950' : 'border-slate-300'
+          }">
+            ${
+              isSelected
+                ? '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>'
+                : ''
+            }
+          </span>
+        `;
+
+        btn.addEventListener('click', () => handleOptionSelect(q.id, opt.value));
+        container.appendChild(btn);
+      });
+
+      // Update Back / Next Buttons
+      document.getElementById('backBtn').disabled = currentIdx === 0;
+      const nextBtn = document.getElementById('nextBtn');
+      nextBtn.disabled = chosen === null;
+      document.getElementById('nextBtnText').textContent =
+        currentIdx === total - 1 ? 'See My Results' : 'Next';
+    }
+
+    function handleOptionSelect(questionId, value) {
+      answers[questionId] = value;
+      renderCurrentQuestion();
+
+      // Smooth auto-advance after brief visual feedback
+      setTimeout(() => {
+        if (currentIdx < QUESTIONS.length - 1) {
+          currentIdx++;
+          renderCurrentQuestion();
+        } else {
+          computeAndDisplayResults();
+        }
+      }, 220);
+    }
+
+    function goPrevious() {
+      if (currentIdx > 0) {
+        currentIdx--;
+        renderCurrentQuestion();
+      }
+    }
+
+    function goNext() {
+      const q = QUESTIONS[currentIdx];
+      if (!answers[q.id]) return;
+
+      if (currentIdx < QUESTIONS.length - 1) {
+        currentIdx++;
+        renderCurrentQuestion();
+      } else {
+        computeAndDisplayResults();
+      }
+    }
+
+    // =========================================================================
+    // 5. ARCHETYPE CLASSIFICATION & SVG PLOTTING
+    // =========================================================================
+    function determineArchetype(brainsPct, boldnessPct) {
+      const diff = boldnessPct - brainsPct;
+
+      // 1. Criminal energy: High Boldness (>= 55%), Low Brains (< 38%)
+      if (boldnessPct >= 55 && brainsPct < 38) {
+        return ARCHETYPES.CRIMINAL_ENERGY;
+      }
+
+      // 2. Reckless chaos: High Boldness (>= 55%), Moderate Brains (38..64%), significantly above diagonal
+      if (boldnessPct >= 55 && brainsPct >= 38 && brainsPct < 65 && diff > 10) {
+        return ARCHETYPES.RECKLESS_CHAOS;
+      }
+
+      // 3. Founder / empire builder: High Brains (>= 68%) AND High Boldness (>= 65%) AND on/above diagonal
+      if (brainsPct >= 68 && boldnessPct >= 65 && diff >= -4) {
+        return ARCHETYPES.EMPIRE_BUILDER;
+      }
+
+      // 4. Forbes 30u30 / The wealth-building sweet spot: Balanced-to-bold above/near diagonal
+      if (brainsPct >= 38 && boldnessPct >= 40 && diff >= -5) {
+        return ARCHETYPES.SWEET_SPOT;
+      }
+
+      // 5. Helpless, meek, and lost: Both Brains (< 48%) and Boldness (< 48%) are low
+      if (brainsPct < 48 && boldnessPct < 48) {
+        return ARCHETYPES.HELPLESS_MEEK;
+      }
+
+      // 6. Bitter professor / permanent student: High Brains relative to low/moderate Boldness
+      return ARCHETYPES.BITTER_PROFESSOR;
+    }
+
+    function computeAndDisplayResults() {
+      let brainsSum = 0;
+      let boldnessSum = 0;
+
+      QUESTIONS.forEach((q) => {
+        const val = answers[q.id] || 3;
+        if (q.axis === 'brains') {
+          brainsSum += val;
+        } else {
+          boldnessSum += val;
+        }
+      });
+
+      // Normalize 5..25 raw range -> 0..100%
+      const brainsPct = Math.round(((brainsSum - 5) / 20) * 100);
+      const boldnessPct = Math.round(((boldnessSum - 5) / 20) * 100);
+
+      // Calculate Boldness-to-Brains Ratio using raw scores (5..25) so division by zero never occurs
+      const ratioNumeric = (boldnessSum / brainsSum).toFixed(2);
+      let ratioHint = 'Equal Balance';
+      if (boldnessSum > brainsSum + 2) ratioHint = 'Boldness-Led';
+      else if (brainsSum > boldnessSum + 2) ratioHint = 'Brains-Led';
+
+      const archetype = determineArchetype(brainsPct, boldnessPct);
+
+      // Switch Screen Visibility
+      document.getElementById('quizScreen').classList.add('hidden');
+      document.getElementById('progressBarTrack').classList.add('hidden');
+      document.getElementById('resultsScreen').classList.remove('hidden');
+
+      // Populate Header & Metrics
+      document.getElementById('resultZoneTitle').textContent = archetype.title;
+      document.getElementById('resultZoneQuote').textContent = archetype.quote;
+
+      const potBadge = document.getElementById('resultPotentialBadge');
+      potBadge.className = `inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold ${archetype.badgeClasses}`;
+      potBadge.textContent = `Wealth-Creation Potential: ${archetype.potential}`;
+
+      document.getElementById('boldnessPctText').textContent = boldnessPct;
+      document.getElementById('brainsPctText').textContent = brainsPct;
+      document.getElementById('boldnessProgressBar').style.width = `${Math.max(5, boldnessPct)}%`;
+      document.getElementById('brainsProgressBar').style.width = `${Math.max(5, brainsPct)}%`;
+
+      document.getElementById('ratioValueText').textContent = `${ratioNumeric}x`;
+      document.getElementById('ratioBalanceHint').textContent = ratioHint;
+
+      // Populate Archetype Card
+      document.getElementById('archetypeDescription').textContent = archetype.description;
+      document.getElementById('archetypeStrengths').textContent = archetype.strengths;
+      document.getElementById('archetypeBlindSpots').textContent = archetype.blindSpots;
+
+      const stepsContainer = document.getElementById('nextStepsList');
+      stepsContainer.innerHTML = '';
+      archetype.nextSteps.forEach((step, idx) => {
+        const li = document.createElement('li');
+        li.className = 'flex items-start gap-3';
+        li.innerHTML = `
+          <span class="w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-extrabold flex items-center justify-center shrink-0 mt-0.5">
+            ${idx + 1}
+          </span>
+          <span class="leading-relaxed">${step}</span>
+        `;
+        stepsContainer.appendChild(li);
+      });
+
+      // Plot User Marker onto SVG Chart
+      // Plot region bounds: X in [68, 778] (width 710), Y in [474 (0%), 18 (100%)] (height 456)
+      const safeX = Math.min(97, Math.max(3, brainsPct));
+      const safeY = Math.min(96, Math.max(4, boldnessPct));
+
+      const svgX = 68 + (safeX / 100) * 710;
+      const svgY = 474 - (safeY / 100) * 456;
+
+      const pinEl = document.getElementById('userCoordinatePin');
+      pinEl.setAttribute('transform', `translate(${svgX.toFixed(1)}, ${svgY.toFixed(1)})`);
+      document.getElementById('pinCoordText').textContent = `YOU (${brainsPct}, ${boldnessPct})`;
+
+      // Flip label pill below pin if pin is near the top edge of the chart
+      const pillEl = document.getElementById('pinLabelPill');
+      if (svgY < 62) {
+        pillEl.setAttribute('transform', 'translate(0, 28)');
+      } else {
+        pillEl.setAttribute('transform', 'translate(0, -25)');
+      }
+
+      // Build Share Text
+      shareSummaryText =
+        `The Boldness-to-Brains Ratio Assessment\n` +
+        `Quadrant: ${archetype.title}\n` +
+        `Boldness: ${boldnessPct}% | Brains: ${brainsPct}% | Ratio: ${ratioNumeric}x\n` +
+        `Wealth-Creation Potential: ${archetype.potential}\n` +
+        `${archetype.quote}`;
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // =========================================================================
+    // 6. SHARE & CLIPBOARD FALLBACK (iOS & Android Compatible)
+    // =========================================================================
+    function showToast(msg) {
+      const banner = document.getElementById('toastBanner');
+      document.getElementById('toastText').textContent = msg;
+      banner.classList.remove('opacity-0', 'translate-y-3');
+      banner.classList.add('opacity-100', 'translate-y-0');
+
+      clearTimeout(window.__toastHideTimer);
+      window.__toastHideTimer = setTimeout(() => {
+        banner.classList.remove('opacity-100', 'translate-y-0');
+        banner.classList.add('opacity-0', 'translate-y-3');
+      }, 2800);
+    }
+
+    function copyViaExecCommand(text) {
+      try {
+        const helper = document.getElementById('clipboardHelper');
+        helper.value = text;
+        helper.classList.remove('sr-only');
+        helper.style.position = 'fixed';
+        helper.style.top = '0';
+        helper.style.left = '0';
+        helper.style.opacity = '0';
+        helper.focus();
+        helper.select();
+        helper.setSelectionRange(0, 99999);
+        const ok = document.execCommand('copy');
+        helper.classList.add('sr-only');
+        showToast(ok ? 'Result copied to clipboard!' : 'Screenshot your chart to share!');
+      } catch (e) {
+        showToast('Screenshot your chart to share!');
+      }
+    }
+
+    async function shareResult() {
+      if (!shareSummaryText) return;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'The Boldness-to-Brains Ratio',
+            text: shareSummaryText
+          });
+          return;
+        } catch (err) {
+          if (err && err.name === 'AbortError') return;
+        }
+      }
+
+      copyViaExecCommand(shareSummaryText);
+    }
+  </script>
+</body>
+</html>
