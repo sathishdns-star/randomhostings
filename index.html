@@ -40,10 +40,12 @@
   <style>
     /* Ensure smooth mobile scrolling and prevent horizontal overflow or tap-highlight flicker */
     html, body {
-      overscroll-behavior-y: none;
       -webkit-tap-highlight-color: transparent;
-      overflow-x: hidden;
+      height: auto;
+      min-height: 100%;
     }
+    html { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    body { overflow-x: clip; }
 
     body {
       padding-top: env(safe-area-inset-top);
